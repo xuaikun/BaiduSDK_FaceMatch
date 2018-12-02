@@ -1,7 +1,7 @@
 ﻿# BaiduSDK_FaceMatch
 利用百度人脸识别SDK，进行筛图
 # 环境：win10 pychram 百度人脸识别sdk
-
+### 记得把公司的程序copy回来，不让后面根本无法进行工作
 主要用于人脸对比（识别）：
 API接口包含我的AppID、API Key、Secret Key： https://console.bce.baidu.com/ai/?_=1542208053975&fromai=1#/ai/face/overview/index
 
@@ -49,13 +49,14 @@ goal =
 {u'log_id': 1345050723414412131L, u'timestamp': 1542341441, u'cached': 0, u'result': None, u'error_code': 222202, u'error_msg': u'pic not has face'}
 result = 
 None
-没有找到图片，尴尬啦~不过没事，写个异常处理应该就可以了~
+没有找到图片，尴尬啦
+不过没事，写个异常处理应该就可以了~
 try:
-  # 异常测试
+   异常测试
 except AttributeError:
-  # 异常处理
+   异常处理
 else:
-  # 没有异常
+   没有异常
   
 对于多台电脑在调用百度SDK时，应该考虑多创建几个应用，不然两个程序运行时可能会冲突
 尽量不让电脑休眠，不然会断网，导致不能访问网络也会导致程序崩溃

@@ -10,9 +10,9 @@ import time
 import shutil
 
 # 定义一些制定路径
-base_folder = "F:\\base_set\\sample"
-test_folder = "F:\\test_set"
-result_folder = "F:\\result"
+base_folder = "E:\\000007work\\base_set\\base"
+test_folder = "E:\\000007work\\test_set"
+result_folder = "E:\\000007work\\result"
 
 
 def root_folder():
@@ -70,8 +70,9 @@ def second_folder(FilePath):
             # 按顺序循环遍历第j个文件夹中的图片
             print " 处理第 k = ", k, "图片"
             print "the num of photo =", PhotoNum_new
+            Flag = True
             for j in range(0, base_set_num):
-                # 最大有66个
+                # 最大有69个
                 print "开始遍历第j个基准文件夹", j + 1
                 # 提取第j个测试库文件夹
                 base_set_j = base_set[j]
@@ -80,8 +81,10 @@ def second_folder(FilePath):
                 # 统计第j个测试库文件夹中图片的数量r
                 # base_set_j_photo_len = base_set_j_photo.__len__()
                 # 按顺序循环遍历第j个文件夹中的图片
+                print 'base_set_j_photo[0] = ', base_set_j_photo[0]
+                print 'Photo[k] = ', Photo[k]
                 goal = A.Face_To_Match(base_set_j_photo[0], Photo[k])
-                time.sleep(0.1)  # 延时0.4s QPS不免费调用接口容易出错
+                time.sleep(1)  # 延时0.4s QPS不免费调用接口容易出错
                 # 应该做个异常处理 (必须做)
                 try:
                     # 测试异常
@@ -102,7 +105,7 @@ def second_folder(FilePath):
                     # 没有异常
                     # score >= 55 表示图片为同一个人 55 为临界值
                     # print 'score =', score
-                    # print 'score = ', score
+                    print 'score = ', score
                     # print "base_set_j = ", base_set_j
                     if (score >= 55) and (score < 60):
                         # 将图片剪切到55_60文件夹
@@ -111,7 +114,11 @@ def second_folder(FilePath):
                         if not isExist:
                             print "不存在该路径，创建对应路径"
                             os.makedirs(NewPhotoPath)
+                        Flag = False
+                        print '图片存入：', NewPhotoPath
+                        print 'Flag = ', Flag
                         shutil.move(Photo[k], NewPhotoPath)
+                        break
                     elif (score >= 60) and (score < 70):
                         # 将图片剪切到60_70文件夹
                         NewPhotoPath = os.path.join(base_set_j, '60_70')
@@ -119,7 +126,11 @@ def second_folder(FilePath):
                         if not isExist:
                             print "不存在该路径，创建对应路径"
                             os.makedirs(NewPhotoPath)
+                        Flag = False
+                        print '图片存入：', NewPhotoPath
+                        print 'Flag = ', Flag
                         shutil.move(Photo[k], NewPhotoPath)
+                        break
                     elif (score >= 70) and (score < 80):
                         # 将图片剪切到70_80文件夹
                         NewPhotoPath = os.path.join(base_set_j, '70_80')
@@ -127,7 +138,11 @@ def second_folder(FilePath):
                         if not isExist:
                             print "不存在该路径，创建对应路径"
                             os.makedirs(NewPhotoPath)
+                        Flag = False
+                        print '图片存入：', NewPhotoPath
+                        print 'Flag = ', Flag
                         shutil.move(Photo[k], NewPhotoPath)
+                        break
                     elif score >= 80:
                         # 将图片剪切到80_100文件夹
                         NewPhotoPath = os.path.join(base_set_j, '80_100')
@@ -135,17 +150,23 @@ def second_folder(FilePath):
                         if not isExist:
                             print "不存在该路径，创建对应路径"
                             os.makedirs(NewPhotoPath)
+                        Flag = False
+                        print '图片存入：', NewPhotoPath
+                        print 'Flag = ', Flag
                         shutil.move(Photo[k], NewPhotoPath)
+                        break
             # 不与其中任意一个文件夹相关 则移除到 laji文件夹中
-            print '图片 Photo[', k, ']=', Photo[k], '不属于任意一个文件夹，移到laji文件夹'
-            NewPhotoPath = os.path.join('F:\\', 'laji')
-            isExist = os.path.exists(NewPhotoPath)
-            if not isExist:
-                print "不存在该路径，创建对应路径"
-                os.makedirs(NewPhotoPath)
-            shutil.move(Photo[k], NewPhotoPath)
+            print 'Flag = ', Flag
+            if Flag is True:
+                print '图片 Photo[', k, ']=', Photo[k], '不属于任意一个文件夹，移到laji文件夹'
+                NewPhotoPath = os.path.join('E:\\000007work\\', 'laji')
+                isExist = os.path.exists(NewPhotoPath)
+                if not isExist:
+                    print "不存在该路径，创建对应路径"
+                    os.makedirs(NewPhotoPath)
+                shutil.move(Photo[k], NewPhotoPath)
 
-                    # 否则 保留 图片 遍历当前测试库的下一张图片
+                # 否则 保留 图片 遍历当前测试库的下一张图片
         # 将分好类的基准库文件存入 结果文件夹
         # shutil.move(path, result_folder)
     return

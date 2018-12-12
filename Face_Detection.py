@@ -1,4 +1,5 @@
 # encoding: utf-8
+# 这个函数主要是检测一张图片中有多少个人
 from aip import AipFace
 import base64
 

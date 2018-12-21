@@ -115,7 +115,7 @@ def cut_photo(photo_name):
                         # 为了避免操作图片时超过像素
                         Y = y - int(y*0.2)
                         if Y < 0:
-                            Y = 0;
+                            Y = 0
                         Y_H = y + h + int(y*0.18)
                         if Y_H > img.shape[0]:
                             Y_H = img.shape[0]
@@ -170,10 +170,15 @@ if __name__ == "__main__":
         error_Flag = True
         end_Flag = True
         fore_fileInfolderNum = 0
+        count = 0
         while end_Flag is True:
             # 再次操作时，可以先延时0.5s
             time.sleep(0.5)
             print "延时了0.5s"
+            print "对当前文件夹操作次数 count =", count
+            if count >= 3:
+                print "对当前文件夹的操作次数已达到3次，终止程序"
+                break
             fileInfolderName = fileInFolder(path)
             fileInfolderNum = fileInfolderName.__len__()
             print "fileInfolderNum =", fileInfolderNum  # 统计图片数目
@@ -186,6 +191,7 @@ if __name__ == "__main__":
             for i in range(0, fileInfolderNum):
                 print "fileInfoldeName[", i, "] =", fileInfolderName[i]
                 error_Flag = cut_photo(fileInfolderName[i])
+            count = count + 1
     end = time.time()
     print "program end ……"
     print ('spend time =', end - start, 's')

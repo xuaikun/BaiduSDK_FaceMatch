@@ -65,3 +65,6 @@ else:
 ## 人脸检测（Face_Detection.py）:
 其中获取options["face_field"] = "age,gender,landmark"; 注意：age和gender之间只能有逗号，不能存在空格
 目前实现了比较准确的抠图
+python环境中添加opecv环境：
+1、首先下载安装opencv
+2、按照这个链接设置调用opencv： https://blog.csdn.net/cumtml/article/details/50575408

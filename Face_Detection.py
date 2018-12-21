@@ -8,6 +8,10 @@ import os
 import shutil
 import time
 
+# 表示要测试图片的文件夹的上一层文件夹
+rootPath = "E:\\000007work\\photo_test"
+# 结果保存的路径 自己事先创建好
+resultPath = "E:\\000007work\\photo_test_result"
 """ 你的 APPID AK SK """
 
 APP_ID = '14803185'
@@ -69,106 +73,119 @@ def cut_photo(photo_name):
         img = cv2.imread(image1)    # 读取图片
         # print "img.shape[0] =", img.shape[0]  # 622 y ~ top
         # print "img.shape[1] =", img.shape[1]  # 534 x ~ left
-
-        if img.shape[0] <= 500 or img.shape[1] <= 500:
-            # 图片已经在之前被处理过了，不需要再次处理，直接剪切到对应文件夹中
-            single_face = os.path.join(SplitPath_new[0], 'single_face')
-            isExist = os.path.exists(single_face)
+        if len(face_list) <= 0:
+            # 图片不存在人脸，直接删除
+            no_face = os.path.join(resultPath, 'no_face')
+            isExist = os.path.exists(no_face)
             if not isExist:
                 print "不存在该路径，创建对应路径"
-                os.makedirs(single_face)
-            shutil.move(image1, single_face)
+                os.makedirs(no_face)
+            shutil.move(image1, no_face)
         else:
-            # 图片未经过操作，需要进行抠图
-            # face_list 保存着几个人脸的位置信息
-            for i in range(0, len(face_list)):
-                get_list = face_list[i]
-                # 获取某个人的人脸位置信息
-                location = get_list.get("location")
-                # 将人脸位置信息具体化
-                width   = location.get("width")     # w
-                top     = location.get("top")       # y
-                height  = location.get("height")    # h
-                left    = location.get("left")      # x
+            # 保证一定存在人脸
+            if img.shape[0] <= 500 or img.shape[1] <= 500:
+                # 图片已经在之前被处理过了，不需要再次处理，直接剪切到对应文件夹中
+                single_face = os.path.join(resultPath, 'single_face')
+                isExist = os.path.exists(single_face)
+                if not isExist:
+                    print "不存在该路径，创建对应路径"
+                    os.makedirs(single_face)
+                shutil.move(image1, single_face)
+            else:
+                # 图片未经过操作，需要进行抠图
+                # face_list 保存着几个人脸的位置信息
+                for i in range(0, len(face_list)):
+                    get_list = face_list[i]
+                    # 获取某个人的人脸位置信息
+                    location = get_list.get("location")
+                    # 将人脸位置信息具体化
+                    width   = location.get("width")     # w
+                    top     = location.get("top")       # y
+                    height  = location.get("height")    # h
+                    left    = location.get("left")      # x
 
-                # 将图像的相关像素整形化
-                x = int(left)
-                y = int(top)
-                w = int(width)
-                h = int(height)
+                    # 将图像的相关像素整形化
+                    x = int(left)
+                    y = int(top)
+                    w = int(width)
+                    h = int(height)
 
-                try:
-                    # 测试异常
-                    # 为了避免操作图片时超过像素
-                    Y = y - int(y*0.2)
-                    if Y < 0:
-                        Y = 0;
-                    Y_H = y + h + int(y*0.18)
-                    if Y_H > img.shape[0]:
-                        Y_H = img.shape[0]
+                    try:
+                        # 测试异常
+                        # 为了避免操作图片时超过像素
+                        Y = y - int(y*0.2)
+                        if Y < 0:
+                            Y = 0;
+                        Y_H = y + h + int(y*0.18)
+                        if Y_H > img.shape[0]:
+                            Y_H = img.shape[0]
 
-                    X = x - int(x*0.03)
-                    if X < 0:
-                        X = 0
-                    X_W = x + w + int(x*0.03)
-                    if X_W > img.shape[1]:
-                        X_W = img.shape[1]
+                        X = x - int(x*0.03)
+                        if X < 0:
+                            X = 0
+                        X_W = x + w + int(x*0.03)
+                        if X_W > img.shape[1]:
+                            X_W = img.shape[1]
 
-                    # 将图片从原图上抠出来，把外部边框扩大一点
-                    f = img[Y:Y_H, X:X_W]
+                        # 将图片从原图上抠出来，把外部边框扩大一点
+                        f = img[Y:Y_H, X:X_W]
+                    except :
+                        print "进行任意异常处理"
+                        # 说明这个图像不清晰，先暂时不处理
+                        break
+                    else:
+                        # 未发生异常
+                        # 重新命名时，可以用时间戳+计数值
+                        partPath = [str(int(time.time())), str(count)]
 
-                except :
-                    print "进行任意异常处理"
-                    # 说明这个图像不清晰，先暂时不处理
-                    break
-                else:
-                    # 未发生异常
-                    # 重新命名时，可以用时间戳+计数值
-                    partPath = [str(int(time.time())), str(count)]
-                    NewPath  = os.path.join(SplitPath_new[0], 'single_face')
-                    isExist = os.path.exists(NewPath)
-                    if not isExist:
-                        print "不存在该路径，创建对应路径"
-                        os.makedirs(NewPath)
-                    # 新的图片命名
-                    New_Name = partPath[0] + partPath[1] + SplitPath[1]
-                    NewPath = os.path.join(NewPath, New_Name)
-                    # 将抠出的图片进行保存
-                    cv2.imwrite(NewPath, f)
-                    count = count + 1
-            operation_ok = os.path.join(SplitPath_new[0], 'operation_ok')
-            isExist = os.path.exists(operation_ok)
-            if not isExist:
-                print "不存在该路径，创建对应路径"
-                os.makedirs(operation_ok)
-            shutil.move(image1, operation_ok)
+                        NewPath  = os.path.join(resultPath, 'single_face')
+                        isExist = os.path.exists(NewPath)
+                        if not isExist:
+                            print "不存在该路径，创建对应路径"
+                            os.makedirs(NewPath)
+                        # 新的图片命名
+                        New_Name = partPath[0] + partPath[1] + SplitPath[1]
+                        NewPath = os.path.join(NewPath, New_Name)
+                        # 将抠出的图片进行保存
+                        cv2.imwrite(NewPath, f)
+                        count = count + 1
+
+                operation_ok = os.path.join(resultPath, 'operation_ok')
+                isExist = os.path.exists(operation_ok)
+                if not isExist:
+                    print "不存在该路径，创建对应路径"
+                    os.makedirs(operation_ok)
+                shutil.move(image1, operation_ok)
     return error_Falg
 
 
 if __name__ == "__main__":
     # path 表示要操作的文件夹
-    path = "E:\\000007work\\photo_test\\1"
-    error_Flag = True
     print "program begin……"
     start = time.time()
-    end_Flag = True
-    fore_fileInfolderNum = 0
-    while end_Flag is True:
-        # 再次操作时，可以先延时0.5s
-        time.sleep(0.5)
-        print "延时了0.5s"
-        fileInfolderName = fileInFolder(path)
-        fileInfolderNum = fileInfolderName.__len__()
-        print "fileInfolderNum =", fileInfolderNum  # 统计图片数目
-        print "fore_fileInfolderNum =", fore_fileInfolderNum  # 上一次统计图片的数目
-        if fore_fileInfolderNum == fileInfolderNum:  # 如果前后两次图片数量相同，终止程序
-            end_Flag = False
-            break
-        fore_fileInfolderNum = fileInfolderNum  # 如果前后两次图片数量不同，则继续对该文件夹操作
+    childernPath = fileInFolder(rootPath)
+    childernPath_Num = childernPath.__len__()
+    for j in range(0, childernPath_Num):
+        path = childernPath[j]
+        error_Flag = True
+        end_Flag = True
+        fore_fileInfolderNum = 0
+        while end_Flag is True:
+            # 再次操作时，可以先延时0.5s
+            time.sleep(0.5)
+            print "延时了0.5s"
+            fileInfolderName = fileInFolder(path)
+            fileInfolderNum = fileInfolderName.__len__()
+            print "fileInfolderNum =", fileInfolderNum  # 统计图片数目
+            print "fore_fileInfolderNum =", fore_fileInfolderNum  # 上一次统计图片的数目
+            if fore_fileInfolderNum == fileInfolderNum:  # 如果前后两次图片数量相同，终止程序
+                end_Flag = False
+                break
+            fore_fileInfolderNum = fileInfolderNum  # 如果前后两次图片数量不同，则继续对该文件夹操作
 
-        for i in range(0, fileInfolderNum):
-            print "fileInfoldeName[", i, "] =", fileInfolderName[i]
-            error_Flag = cut_photo(fileInfolderName[i])
+            for i in range(0, fileInfolderNum):
+                print "fileInfoldeName[", i, "] =", fileInfolderName[i]
+                error_Flag = cut_photo(fileInfolderName[i])
     end = time.time()
     print "program end ……"
     print ('spend time =', end - start, 's')

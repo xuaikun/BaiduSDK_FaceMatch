@@ -158,8 +158,7 @@ def cut_photo(photo_name):
                 shutil.move(image1, operation_ok)
     return error_Falg
 
-
-if __name__ == "__main__":
+def start():
     # path 表示要操作的文件夹
     print "program begin……"
     start = time.time()
@@ -176,8 +175,8 @@ if __name__ == "__main__":
             time.sleep(0.5)
             print "延时了0.5s"
             print "对当前文件夹操作次数 count =", count
-            if count >= 3:
-                print "对当前文件夹的操作次数已达到3次，终止程序"
+            if count >= 1:
+                print "对当前文件夹的操作次数已达到1次，终止程序"
                 break
             fileInfolderName = fileInFolder(path)
             fileInfolderNum = fileInfolderName.__len__()
@@ -195,3 +194,19 @@ if __name__ == "__main__":
     end = time.time()
     print "program end ……"
     print ('spend time =', end - start, 's')
+    return True
+
+
+if __name__ == "__main__":
+	exceptFlag = False
+	while exceptFlag is False:
+		try:
+			print "异常测试"
+			exceptFlag = start()
+		except:
+			print "处理异常"
+			time.sleep(0.1)
+			exceptFlag = False
+		else:
+			print "没有异常"
+	print "程序结束~~~"

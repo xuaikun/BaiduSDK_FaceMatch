@@ -1,7 +1,7 @@
 ﻿# BaiduSDK_FaceMatch
 利用百度人脸识别SDK，进行筛图
 # 环境：win10 pychram 百度人脸识别sdk
-### 记得把公司的程序copy回来，不让后面根本无法进行工作
+### 记得把公司的程序copy回来，不然后面根本无法进行工作
 主要用于人脸对比（识别）：
 API接口包含我的AppID、API Key、Secret Key： https://console.bce.baidu.com/ai/?_=1542208053975&fromai=1#/ai/face/overview/index
 
